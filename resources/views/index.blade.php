@@ -11,7 +11,7 @@
         @csrf
         <div>
             <label for="image">Select Image or PDF:</label>
-            <input type="file" name="image" id="image" accept="image/*,application/pdf" required>
+            <input type="file" name="image" id="image" accept=".png, .jpeg, .jpg, .pdf" required>
         </div>
 
         <div>
