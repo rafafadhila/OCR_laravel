@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Alimranahmed\LaraOCR\Facades\OCR;
+use App\Models\OcrResult;
 use Spatie\PdfToImage\Pdf; // Import the Pdf class
 
 class OCRController extends Controller
@@ -21,6 +22,8 @@ class OCRController extends Controller
 
         // Store the uploaded file temporarily
         $filePath = $file->store('temp_files');
+
+        $fileName = $file->getClientOriginalName();
 
         $ocrText = '';
 
@@ -54,6 +57,12 @@ class OCRController extends Controller
             // Delete the temporary image file
             Storage::delete($filePath);
         }
+
+        OcrResult::create([
+            'file_name' => $fileName, // This path is only for reference; the file will be deleted
+            'file_path' => $filePath, // This path is only for reference; the file will be deleted
+            'extracted_text' => $ocrText,
+        ]);
 
         // Return the OCR text in the response
         return response()->json(['text' => $ocrText]);
