@@ -42,7 +42,9 @@ class OCRController extends Controller
         
                 // Use OCR to extract text from the image
                 $pageOcrText = OCR::scan($imagePath);
-                $ocrText .= $pageOcrText . "\n"; // Concatenate OCR text with line breaks between pages
+                $ocrText .= $pageOcrText . "\f"; // Concatenate OCR text with line breaks between pages
+
+                $pages = explode("\f", $ocrText);
         
                 // Delete the temporary image file
                 unlink($imagePath);
@@ -58,11 +60,16 @@ class OCRController extends Controller
             Storage::delete($filePath);
         }
 
-        OcrResult::create([
-            'file_name' => $fileName, // This path is only for reference; the file will be deleted
-            'file_path' => $filePath, // This path is only for reference; the file will be deleted
-            'extracted_text' => $ocrText,
-        ]);
+        foreach ($pages as $pageNumber => $pageText) {
+            if (!empty(trim($pageText))) { // Skip empty parts
+                OcrResult::create([
+                    'file_name' => $fileName,
+                    'file_path' => $filePath,
+                    'page_number' => $pageNumber + 1,
+                    'extracted_text' => $pageText,
+                ]);
+            }
+        }
 
         // Return the OCR text in the response
         return response()->json(['text' => $ocrText]);

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('file_name');
             $table->string('file_path');
             $table->longText('extracted_text');
+            $table->integer('page_number'); 
             $table->timestamps();
         });
     }
