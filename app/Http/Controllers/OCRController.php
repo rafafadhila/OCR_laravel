@@ -56,6 +56,8 @@ class OCRController extends Controller
             // If it's an image, use OCR directly
             $ocrText = OCR::scan(storage_path('app/' . $filePath));
 
+            $pages = explode("\f", $ocrText);
+
             // Delete the temporary image file
             Storage::delete($filePath);
         }
@@ -73,5 +75,20 @@ class OCRController extends Controller
 
         // Return the OCR text in the response
         return response()->json(['text' => $ocrText]);
+    }
+    
+    public function showOcrImage(Request $request)
+    {
+         // Check if there's a search term in the request
+    $searchTerm = $request->input('image');
+
+    // If there's a search term, filter the results by file name, otherwise get all results
+    if ($searchTerm) {
+        $results = OcrResult::where('file_name', 'like', '%' . $searchTerm . '%')->orWhere('extracted_text', 'like', '%' . $searchTerm . '%')->latest()->get();
+    } else {
+        $results = OcrResult::latest()->get();
+    }
+
+        return view('search', compact('results')); // Pass results to the view
     }
 }
