@@ -10,7 +10,7 @@ use Spatie\PdfToImage\Pdf; // Import the Pdf class
 
 class OCRController extends Controller
 {
-    public function ocrImage(Request $request)
+    public function store(Request $request)
     {
         // Validate the uploaded file
         $request->validate([
@@ -41,7 +41,7 @@ class OCRController extends Controller
                 $pdf->selectPage($page)->save($imagePath);
         
                 // Use OCR to extract text from the image
-                $pageOcrText = OCR::scan($imagePath);
+                $pageOcrText = OCR::scan($imagePath);  
                 $ocrText .= $pageOcrText . "\f"; // Concatenate OCR text with line breaks between pages
 
                 $pages = explode("\f", $ocrText);
@@ -62,12 +62,12 @@ class OCRController extends Controller
             Storage::delete($filePath);
         }
 
-        foreach ($pages as $pageNumber => $pageText) {
+        foreach ($pages as $pageNumber => $pageText) { 
             if (!empty(trim($pageText))) { // Skip empty parts
                 OcrResult::create([
                     'file_name' => $fileName,
                     'file_path' => $filePath,
-                    'page_number' => $pageNumber + 1,
+                    'page_number' => $pageNumber + 1,       
                     'extracted_text' => $pageText,
                 ]);
             }
@@ -77,7 +77,7 @@ class OCRController extends Controller
         return response()->json(['text' => $ocrText]);
     }
     
-    public function showOcrImage(Request $request)
+    public function show(Request $request)
     {
          // Check if there's a search term in the request
     $searchTerm = $request->input('image');
