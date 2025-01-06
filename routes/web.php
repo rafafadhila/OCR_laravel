@@ -21,7 +21,7 @@ Route::get('/', function () {
     return view('index'); // Replace 'index' with your actual view name
 });
 
-Route::get('/search', [OcrController::class, 'showOcrImage'])->name('ocr.search');
+Route::get('/search', [OcrController::class, 'show'])->name('ocr.search');
 
-Route::post('/ocr', [OcrController::class, 'ocrImage'])->name('ocr.image');
+Route::post('/ocr', [OcrController::class, 'store'])->name('ocr.image');
 
